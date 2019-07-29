@@ -46,7 +46,11 @@ public class Pi4JController {
                 PinState.LOW);
     }
 
-    // SecoLarm - Garage door state
+    // Methods
+
+    /*
+        SecoLarm - Garage door state
+    */
     private void handleSecoLarmInput(GpioPinDigitalStateChangeEvent event) {
         mSecoLarmState = event.getState();
 
@@ -55,7 +59,27 @@ public class Pi4JController {
         }
     }
 
-    // Relay - Open/Close garage door
+    /**
+     * isGarageDoorOpen
+     * Manually check if garage door is open
+     *
+     * @return true if open, false if closed
+     */
+    public boolean isGarageDoorOpen() {
+        return mSecoLarmState.isHigh();
+    }
+
+    /*
+        Relay - Open/Close garage door
+    */
+
+    /**
+     * openRelay
+     * Sends the command to the relay to trigger the opening/closing of the garage door
+     *
+     * @return 1 if logic was completed, not necessarily if the garage door opener actually received input
+     * @throws StateNotReadyException if called within 30 sec of last attempt
+     */
     public synchronized int openRelay() throws StateNotReadyException {
 
         if (openRelayInstant == null || Instant.now().isAfter(openRelayInstant.plusSeconds(30))) {
